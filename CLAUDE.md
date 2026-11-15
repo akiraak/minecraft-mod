@@ -13,10 +13,29 @@ minecraft-mod（リポジトリ: `git@github.com:akiraak/minecraft-mod.git`）�
 - 統合版の仕様（`format_version`、Script API のモジュールの版、コンポーネント名など）は版ごとに変わる。記憶で書かず、公式ドキュメント（Microsoft Learn の Minecraft Creator）と対象の版を確かめてから書く
 - どんな mod を作るか、ディレクトリ構成、ビルドと動作確認の手順は、利用者と相談して決める。決まったらこのファイルに書き足す
 
+## 遊ぶ環境
+
+- 利用者は **Realms** で遊んでいる（2026-11-14 に利用者から聞いた）
+- 以下は Claude の解釈で、利用者に確かめたものではない: 作った mod は最終的に Realms のワールドで動かす想定で考える。`development_behavior_packs/` に置く方法はローカルのワールド用で、Realms にはそのままでは効かない。Realms への入れ方と、Realms で使える機能の制限（ベータ API や実験的機能など）は未調査なので、公式の情報で確かめてから手順を決める
+
 ## 現状
 
-- リポジトリには `README.md`、`LICENSE`、この `CLAUDE.md` だけがある
-- 作る mod の内容、対象の版、ディレクトリ構成、進め方はまだ決まっていない
+- 最初の実験として `game-clock`（ゲーム内時間をアクションバーに表示する）を作り、2026-11-14 に利用者がローカルのワールドで表示を確かめた。このリポジトリの作り方と配置方法で mod は動く
+- 本格的に作る mod の内容はまだ決まっていない。下の構成と手順は実験用に仮に置いたもので、利用者と相談して変えてよい
+
+## 対象の版（2026-11-14 に確認）
+
+- 統合版（安定版）1.26.63、`@minecraft/server` 2.11.0（安定版）、`manifest.json` の `format_version` は 2
+- ゲームが更新されたら確かめ直す。ゲームの版は `Get-AppxPackage *Minecraft*`、API の版は `npm view @minecraft/server dist-tags`。型定義は `npm pack @minecraft/server@<版>` で取れる `index.d.ts` が確実
+- Microsoft Learn の Script API v2 の概要ページは「2.0.0-beta」の頃の記述のままで古い。版の対応は npm のほうを信じる
+
+## ディレクトリ構成と手順（仮）
+
+- `addons/<名前>/behavior_pack/`: ビヘイビアパック。リソースパックが要るときは隣に `resource_pack/` を置く
+- スクリプトはビルドなしの JavaScript。ゲームの API に依存しない処理は別ファイルに分け、Node で試せるようにする
+- `tools/deploy.sh <名前>`: 安定版の `development_behavior_packs/<名前>/` へコピーする。既存のパックとワールドは書き換えない
+- ワールドでパックを有効にするのは、ゲームの画面から利用者が行う。「ワールドを作成」→「ビヘイビアー パック」でパックを選び、「認証する」を押す（言語ファイルの「有効化」ではなかった）
+- 画面の案内をするときは、ゲームの日本語ファイル（インストール先の `data/resource_packs/vanilla/texts/ja_JP.lang`）で表示名を確かめる。ただし実際の画面と違うことがある
 
 ## 関係するプロジェクト
 
