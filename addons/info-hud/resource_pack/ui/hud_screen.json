@@ -41,6 +41,45 @@
       }
     ]
   },
+  "info_hud_area": {
+    "type": "panel",
+    "size": [
+      "177.78%y",
+      "100%"
+    ],
+    "max_size": [
+      "100%",
+      "100%"
+    ],
+    "controls": [
+      {
+        "info_hud_display@hud.info_hud_display": {
+          "anchor_from": "top_left",
+          "anchor_to": "top_left"
+        }
+      }
+    ]
+  },
+  "info_hud_spacer": {
+    "type": "panel",
+    "size": [
+      "100%",
+      34
+    ]
+  },
+  "root_panel": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_front",
+        "value": [
+          {
+            "info_hud_area@hud.info_hud_area": {}
+          }
+        ]
+      }
+    ]
+  },
   "root_panel/chat_stack": {
     "modifications": [
       {
@@ -48,7 +87,7 @@
         "operation": "insert_front",
         "value": [
           {
-            "info_hud_display@hud.info_hud_display": {}
+            "info_hud_spacer@hud.info_hud_spacer": {}
           }
         ]
       }

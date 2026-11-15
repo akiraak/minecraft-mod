@@ -26,3 +26,20 @@ export function formatHud(timeOfDay, location) {
   const z = Math.floor(location.z);
   return `${formatTime(timeOfDay)}  ${x}, ${y}, ${z}`;
 }
+
+/**
+ * 鉱石 1 種類ぶんの行を作る。
+ *
+ * @param {string} label 鉱石の名前（例: "Diamond"）
+ * @param {{x: number, y: number, z: number} | undefined} orePosition 鉱石のブロックの座標。無ければ undefined
+ * @param {{x: number, y: number, z: number}} location プレイヤーの位置（足元）
+ * @returns {string} 例: "Diamond  -18, -60, 39  14m"。無いときは "Diamond  --"
+ */
+export function formatOreLine(label, orePosition, location) {
+  if (!orePosition) return `${label}  --`;
+  const dx = orePosition.x - Math.floor(location.x);
+  const dy = orePosition.y - Math.floor(location.y);
+  const dz = orePosition.z - Math.floor(location.z);
+  const distance = Math.round(Math.sqrt(dx * dx + dy * dy + dz * dz));
+  return `${label}  ${orePosition.x}, ${orePosition.y}, ${orePosition.z}  ${distance}m`;
+}
