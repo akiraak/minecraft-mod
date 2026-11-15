@@ -1,27 +1,31 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Game Clock",
-    "description": "ゲーム内の日数と時刻をアクションバーに表示する（動作確認用）",
+    "name": "Info HUD",
+    "description": "ゲーム内の時刻や座標などの情報を画面の左上に表示する",
     "uuid": "19c22a3c-0e31-4014-a514-3f3f3fba8f66",
-    "version": [0, 1, 0],
+    "version": [0, 2, 0],
     "min_engine_version": [1, 26, 60]
   },
   "modules": [
     {
       "type": "data",
       "uuid": "0162db80-d44d-449d-b8de-f1e91b527f1a",
-      "version": [0, 1, 0]
+      "version": [0, 2, 0]
     },
     {
       "type": "script",
       "language": "javascript",
       "uuid": "013b3bca-1f9e-4e0b-9c38-07612af27126",
-      "version": [0, 1, 0],
+      "version": [0, 2, 0],
       "entry": "scripts/main.js"
     }
   ],
   "dependencies": [
+    {
+      "uuid": "e9204b47-4b76-4c49-b5a8-7bc9431dbc4b",
+      "version": [0, 2, 0]
+    },
     {
       "module_name": "@minecraft/server",
       "version": "2.11.0"

@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Info HUD Resources",
+    "description": "Info HUD の表示を画面の左上に出す（ビヘイビアパックと組で使う）",
+    "uuid": "e9204b47-4b76-4c49-b5a8-7bc9431dbc4b",
+    "version": [0, 2, 0],
+    "min_engine_version": [1, 26, 60]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "fbfa69bc-d8d9-43cf-8f2c-0d9f4a685dfe",
+      "version": [0, 2, 0]
+    }
+  ]
+}

@@ -16,11 +16,21 @@ minecraft-mod（リポジトリ: `git@github.com:akiraak/minecraft-mod.git`）�
 ## 遊ぶ環境
 
 - 利用者は **Realms** で遊んでいる（2026-11-14 に利用者から聞いた）
-- 以下は Claude の解釈で、利用者に確かめたものではない: 作った mod は最終的に Realms のワールドで動かす想定で考える。`development_behavior_packs/` に置く方法はローカルのワールド用で、Realms にはそのままでは効かない。Realms への入れ方と、Realms で使える機能の制限（ベータ API や実験的機能など）は未調査なので、公式の情報で確かめてから手順を決める
+- 作った mod は最終的に Realms のワールドで動かす。先にローカルのワールドで確かめてから Realm に入れる
+- Realm への入れ方（2026-11-14 に `game-clock` 0.1.0 で確認。操作は利用者がゲームの画面から行う）
+  - Realm Hub → 上の「ワールド」→「スロット」→ 有効なワールドの「ワールドを編集」→「ビヘイビアー パック」でパックを選び「認証する」
+  - 開発用フォルダ（`development_behavior_packs/`）に置いたパックを、そのまま選べた。`.mcpack` にする必要はなかった
+  - 先にバックアップを取る: 「ワールド」→「保存」→「アクティブなワールドを保存」
+  - 同じ画面の「ワールドを置き換え」「ワールドをリセット」は Realm のワールドを変えてしまうので使わない
+- Realms の制限: ベータ API（`-beta` の版の Script API）と `@minecraft/server-net` は使えない（Microsoft Learn）。安定版の `@minecraft/server` 2.11.0 は動いた
+- まだ分かっていないこと: Realm に入れたパックを新しい版に更新する手順、リソースパックの入れ方、実績への影響
+- 調査の経緯は `docs/plans/archive/realms-support.md`
 
 ## 現状
 
-- 最初の実験として `game-clock`（ゲーム内時間をアクションバーに表示する）を作り、2026-11-14 に利用者がローカルのワールドで表示を確かめた。このリポジトリの作り方と配置方法で mod は動く
+- 最初の実験として `game-clock`（ゲーム内時間をアクションバーに表示する）を作り、2026-11-14 に利用者がローカルのワールドと Realm で表示を確かめた。このリポジトリの作り方と配置方法で mod は動く
+- 0.2.0 で名前を `Info HUD`（`addons/info-hud/`）に変え、表示を画面の左上の `06:58  -28, 70, 48`（時刻と、カンマで区切った X, Y, Z）に変えた。ローカルのワールドでは表示を確認済みで、Realm への入れ替えが残っている（`TODO.md`）。今後も表示が増える可能性があるので、時計に限らない名前にした。UUID は `game-clock` のときと同じ。Realm に入っているのは 0.1.0（名前は `Game Clock`）
+- Realm へパックを上げると、ゲームが開発用フォルダに `<名前>.zip` を作るらしい（`game-clock.zip` が残っていた）。残っていると、古い版が一覧に出る。`game-clock.zip` は 2026-11-14 に利用者の指示で消した
 - 本格的に作る mod の内容はまだ決まっていない。下の構成と手順は実験用に仮に置いたもので、利用者と相談して変えてよい
 
 ## 対象の版（2026-11-14 に確認）
@@ -33,7 +43,16 @@ minecraft-mod（リポジトリ: `git@github.com:akiraak/minecraft-mod.git`）�
 
 - `addons/<名前>/behavior_pack/`: ビヘイビアパック。リソースパックが要るときは隣に `resource_pack/` を置く
 - スクリプトはビルドなしの JavaScript。ゲームの API に依存しない処理は別ファイルに分け、Node で試せるようにする
-- `tools/deploy.sh <名前>`: 安定版の `development_behavior_packs/<名前>/` へコピーする。既存のパックとワールドは書き換えない
+- `tools/deploy.sh <名前>`: 安定版の `development_behavior_packs/<名前>/` と、リソースパックがあれば `development_resource_packs/<名前>/` へコピーする。既存のパックとワールドは書き換えない
+- `tools/pack.sh <名前>`: 配布用の `dist/<名前>.mcpack`（リソースパックもあれば `.mcaddon`）を作る。`dist/` は git 管理外
+- JSON UI で分かったこと（2026-11-14、統合版 1.26.63 でゲームを動かして確認。詳しくは `docs/plans/info-hud.md`）
+  - スクリプトから HUD へ文字を渡すには、タイトル（`setTitle`）で送って `#hud_title_text_string` を読む。`binding_type` が `global` のバインディングで読め、`view` のバインディングの式を通して `#text` に入れられる
+  - 式の結果が数字で始まると文字が出なかった（`06:58 ...`）。頭に `§f` のような色の指定を挟むと出る。数字で始まるのが原因というのは推定
+  - Bedrock Wiki の「Preserve Title Texts」の書き方（`property_bag`、`visibility_changed`）は動かなかった
+  - 要素を足すのは `modifications` の `insert_front`、消すのは `"ignored": true`。利用者の PC の `resource_packs/bedrock-ui-plus/ui/hud_screen.json` が動いている実例として参考になる
+  - JSON UI の失敗はコンテンツログに出ない。切り分けは、固定の文字の行・文字列そのままの行・式を通した行を並べて、利用者に何が出たかを見てもらう
+  - ラベルの `"shadow": true` は、利用者には文字が二重に見える。付けない
+- HUD の見た目を変えるときは、リソースパックの `ui/hud_screen.json`（JSON UI）に差分だけを書く。バニラの定義はインストール先からは読めない（`__brarchive` にまとめられている）ので、Mojang の `bedrock-samples` の、ゲームの版に近いタグの `resource_pack/ui/` を見る。書き方は Bedrock Wiki の JSON UI のページ。JSON UI は廃止予定とされていて、ゲームで動かして確かめるしかない
 - ワールドでパックを有効にするのは、ゲームの画面から利用者が行う。「ワールドを作成」→「ビヘイビアー パック」でパックを選び、「認証する」を押す（言語ファイルの「有効化」ではなかった）
 - 画面の案内をするときは、ゲームの日本語ファイル（インストール先の `data/resource_packs/vanilla/texts/ja_JP.lang`）で表示名を確かめる。ただし実際の画面と違うことがある
 

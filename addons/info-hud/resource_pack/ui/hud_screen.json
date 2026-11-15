@@ -1,0 +1,74 @@
+{
+  "namespace": "hud",
+  "info_hud_display": {
+    "type": "image",
+    "size": [
+      "100%c + 6px",
+      "100%c + 2px"
+    ],
+    "texture": "textures/ui/Black",
+    "alpha": 0.7,
+    "controls": [
+      {
+        "info_hud_text": {
+          "type": "label",
+          "$info_hud_marker": "infohud:",
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "layer": 1,
+          "color": "$chat_text_color",
+          "shadow": false,
+          "localize": false,
+          "text": "#text",
+          "bindings": [
+            {
+              "binding_name": "#hud_title_text_string",
+              "binding_type": "global"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#hud_title_text_string - $info_hud_marker)",
+              "target_property_name": "#text"
+            }
+          ]
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "binding_name": "#hud_text_background_alpha",
+        "binding_name_override": "#alpha"
+      }
+    ]
+  },
+  "root_panel/chat_stack": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_front",
+        "value": [
+          {
+            "info_hud_display@hud.info_hud_display": {}
+          }
+        ]
+      }
+    ]
+  },
+  "root_panel/chat_stack/player_position": {
+    "ignored": true
+  },
+  "hud_title_text": {
+    "$info_hud_marker": "infohud:",
+    "bindings": [
+      {
+        "binding_name": "#hud_title_text_string",
+        "binding_type": "global"
+      },
+      {
+        "binding_type": "view",
+        "source_property_name": "((#hud_title_text_string - $info_hud_marker) = #hud_title_text_string)",
+        "target_property_name": "#visible"
+      }
+    ]
+  }
+}
